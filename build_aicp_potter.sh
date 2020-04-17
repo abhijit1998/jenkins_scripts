@@ -1,16 +1,8 @@
 #!/bin/bash
 
-#CLEAN BUILD DIRECTORY
-rm -rf ~/builds/aicp-15.0
-
-#MAKING BUILD DIRECTORY
-mkdir ~/builds/aicp-15.0
-cd ~/builds/aicp-15.0/
-
-#ADDING AICP SOURCE
+# ADD SOURCE
+if [ "$add_source" = true ]; then
 repo init -u https://github.com/AICP/platform_manifest.git -b q10.0
-
-#ADDING MOTO G5 PLUS (POTTER) DEVICE TREE, KERNEL, VENDOR AND OTHER SOURCE FOR BUILDING AICP-15.0
 mkdir .repo/local_manifests
 FILE=".repo/local_manifests/roomservice.xml"
 /bin/cat <<EOM >$FILE
@@ -23,6 +15,25 @@ FILE=".repo/local_manifests/roomservice.xml"
   <project path="system/qcom" name="LineageOS/android_system_qcom" remote="github" revision="lineage-17.0" />
 </manifest>
 EOM
+fi
 
-#REPO SYNC / DOWNLOAD SOURCE FILES
+# REPO SYNC / DOWNLOAD SOURCE FILES
+if [ "$repo_sync" = true ]; then
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+fi
+
+# CLEAN OUT DIRECTORY
+if [ "$clean_out" = true ]; then
+rm -rf out
+fi
+
+# USING CCACHE
+export USE_CCACHE=1
+export CCACHE_EXEC=$(command -v ccache)
+
+# MAKE BUILD
+if [ "$make_build" = true ]; then
+. build/envsetup.sh
+lunch aicp_potter-userdebug
+mka bacon -j$(nproc --all)
+fi
