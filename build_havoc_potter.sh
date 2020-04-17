@@ -1,16 +1,8 @@
 #!/bin/bash
 
-#CLEANING BUILD DIRECTORY
-rm -rf ~/builds/havoc-10.0
-
-#MAKING BUILD DIRECTORY
-mkdir ~/builds/havoc-10.0
-cd ~/builds/havoc-10.0/
-
-#ADDING HAVOC SOURCE
+# ADD SOURCE
+if [ "$add_source" = true ]; then
 repo init -u https://github.com/Havoc-OS/android_manifest.git -b ten
-
-#ADDING MOTO G5 PLUS (POTTER) DEVICE TREE, KERNEL, VENDOR AND OTHER SOURCE FOR BUILDING HAVOC
 mkdir .repo/local_manifests
 FILE=".repo/local_manifests/roomservice.xml"
 /bin/cat <<EOM >$FILE
@@ -23,15 +15,30 @@ FILE=".repo/local_manifests/roomservice.xml"
   <project path="system/qcom" name="LineageOS/android_system_qcom" remote="github" revision="lineage-17.0" />
 </manifest>
 EOM
+fi
 
-#REPO SYNC / DOWNLOAD SOURCE FILES
+# REPO SYNC / DOWNLOAD SOURCE FILES
+if [ "$repo_sync" = true ]; then
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+fi
 
-#USE CCACHE (OPTIONAL)
+# CLEAN OUT DIRECTORY
+if [ "$clean_out" = true ]; then
+rm -rf out
+fi
+
+# USING CCACHE
 export USE_CCACHE=1
 export CCACHE_EXEC=$(command -v ccache)
 
-#BUILD ROM FOR MOTO G5 PLUS (POTTER)
+# GAPPS BUILD
+if [ "$make_gapps" = true ]; then
+export WITH_GAPPS=true && export TARGET_GAPPS_ARCH=arm64
+fi
+
+# MAKE BUILD
+if [ "$make_build" = true ]; then
 . build/envsetup.sh
 lunch havoc_potter-userdebug
 mka bacon -j$(nproc --all)
+fi
