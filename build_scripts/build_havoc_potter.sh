@@ -9,7 +9,7 @@ FILE=".repo/local_manifests/roomservice.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <project path="device/motorola/potter" name="abhijit1998/device_motorola_potter" remote="github" revision="havoc-10.0" />
-  <project path="vendor/motorola" name="PixelExperience-Devices/vendor_motorola" remote="github" revision="ten" />
+  <project path="vendor/motorola/potter" name="ArrowOS-Devices/android_vendor_motorola_potter" remote="github" revision="arrow-10.0" />
   <project path="kernel/motorola/potter" name="GZR-Kernels/Optimus_Drunk_Potter" remote="github" revision="10.0" />
   <project path="packages/resources/MotoActions" name="ArrowOS-Devices/packages_resources_MotoActions" remote="github" revision="arrow-10.0" />
   <project path="system/qcom" name="LineageOS/android_system_qcom" remote="github" revision="lineage-17.0" />
